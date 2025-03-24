@@ -8,10 +8,9 @@ from bullet import Bullet
 pygame.init()
 color = (255, 255, 255)
 position = (0, 0)
-
-ticks_per_second = 30
 canvas = pygame.display.set_mode((500, 500))
 
+canvas = pygame.display.set_mode((500, 500))
 pygame.display.set_caption("River Raid")
 
 all_sprites = pygame.sprite.Group()
