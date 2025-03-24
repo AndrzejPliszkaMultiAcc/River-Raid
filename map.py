@@ -21,9 +21,9 @@ class MapTile:
 class TerrainStructures(Enum):
     STRAIGHT_CORRIDOR = [
         MapTile(10, 5, True),
-        MapTile(1, 4, True),
-        MapTile(1, 3, True),
-        MapTile(100, 2, True)
+        MapTile(2, 4, True),
+        MapTile(2, 3, True),
+        MapTile(1, 2, True)
     ]
 
 class Map:
@@ -33,14 +33,16 @@ class Map:
         self.screen_height = surface.get_height()
         self.block_list = []
         self.y_offset = 0
-        self.velocity = 10
+        self.velocity = 10 #max 24, min 1
         self.blocks_on_screen = 20
         self.block_width = self.screen_width / self.blocks_on_screen
         self.block_height = self.screen_height / self.blocks_on_screen
         self.next_line_to_spawn = []
         self.current_spawned_line = 0
         self.current_spawned_tile = 0
-        self.current_spawned_structure = TerrainStructures.STRAIGHT_CORRIDOR
+        self.map_structures = [TerrainStructures.STRAIGHT_CORRIDOR]
+        self.current_spawned_structure_index = 0
+        self.current_spawned_structure = self.map_structures[self.current_spawned_structure_index]
 
     def display_saved_blocks(self):
         for block in self.block_list:
@@ -74,7 +76,12 @@ class Map:
         self.current_spawned_line += 1
 
         if self.current_spawned_tile >= len(map_tile_list):
-            self.next_line_to_spawn = []
+            self.current_spawned_structure_index += 1
+            if self.current_spawned_structure_index >= len(self.map_structures):
+                self.current_spawned_structure_index = 0
+            self.current_spawned_structure = self.map_structures[self.current_spawned_structure_index]
+            self.current_spawned_line = 0
+            self.current_spawned_tile = 0
             return
 
         if self.current_spawned_line >= map_tile_list[self.current_spawned_tile].height:
