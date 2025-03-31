@@ -106,4 +106,3 @@ class Map:
             self.next_line_to_spawn = list_of_x_cords
 
         self.current_spawned_line += 1
-
