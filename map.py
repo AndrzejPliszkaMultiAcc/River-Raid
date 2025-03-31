@@ -2,10 +2,11 @@ from enum import Enum
 import pygame
 
 class MapTile:
-    def __init__(self, height, width, expand_from_walls):
+    def __init__(self, height, width, expand_from_walls, offset):
         self.height = height
         self.width = width
         self.fill_expand_from_walls = expand_from_walls
+        self.offset = offset
 
     def get_list_of_x_cords(self, block_width):
         list_of_x_cords = []
@@ -16,14 +17,18 @@ class MapTile:
         else:
             for i in range(self.width, block_width-self.width):
                 list_of_x_cords.append(i)
+            for i in range(self.offset):
+                list_of_x_cords.append(i)
+                list_of_x_cords.append(block_width - (1 + i))
+
         return list_of_x_cords
 
 class TerrainStructures(Enum):
     STRAIGHT_CORRIDOR = [
-        MapTile(10, 5, True),
-        MapTile(2, 4, True),
-        MapTile(2, 3, True),
-        MapTile(1, 2, True)
+        MapTile(5, 8, False, 2),
+        MapTile(2, 7, False, 2),
+        MapTile(2, 6, False, 2),
+        MapTile(30, 9, False, 2)
     ]
 
 class Map:
@@ -33,7 +38,7 @@ class Map:
         self.screen_height = surface.get_height()
         self.block_list = []
         self.y_offset = 0
-        self.velocity = 10 #max 24, min 1
+        self.velocity = 24.9 #max 24, min 1
         self.blocks_on_screen = 20
         self.block_width = self.screen_width / self.blocks_on_screen
         self.block_height = self.screen_height / self.blocks_on_screen
