@@ -25,10 +25,19 @@ class MapTile:
 
 class TerrainStructures(Enum):
     STRAIGHT_CORRIDOR = [
-        MapTile(5, 8, False, 2),
-        MapTile(2, 7, False, 2),
-        MapTile(2, 6, False, 2),
-        MapTile(30, 9, False, 2)
+        MapTile(1, 1, True, 0),
+        MapTile(1, 2, True, 0),
+        MapTile(1, 3, True, 0),
+        MapTile(1, 4, True, 0),
+        MapTile(1, 5, True, 0),
+        MapTile(1, 6, True, 0),
+        MapTile(5, 7, True, 0),
+        MapTile(1, 6, True, 0),
+        MapTile(1, 5, True, 0),
+        MapTile(1, 4, True, 0),
+        MapTile(1, 3, True, 0),
+        MapTile(1, 2, True, 0),
+        MapTile(1, 1, True, 0),
     ]
 
 class Map:
@@ -38,7 +47,7 @@ class Map:
         self.screen_height = surface.get_height()
         self.block_list = []
         self.y_offset = 0
-        self.velocity = 24.9 #max 24, min 1
+        self.velocity = 10 #max 24, min 1
         self.blocks_on_screen = 20
         self.block_width = self.screen_width / self.blocks_on_screen
         self.block_height = self.screen_height / self.blocks_on_screen
@@ -78,7 +87,10 @@ class Map:
 
     def update_next_line_to_spawn(self):
         map_tile_list = self.current_spawned_structure.value
-        self.current_spawned_line += 1
+
+        if self.current_spawned_line >= map_tile_list[self.current_spawned_tile].height:
+            self.current_spawned_line = 0
+            self.current_spawned_tile += 1
 
         if self.current_spawned_tile >= len(map_tile_list):
             self.current_spawned_structure_index += 1
@@ -87,12 +99,11 @@ class Map:
             self.current_spawned_structure = self.map_structures[self.current_spawned_structure_index]
             self.current_spawned_line = 0
             self.current_spawned_tile = 0
-            return
-
-        if self.current_spawned_line >= map_tile_list[self.current_spawned_tile].height:
-            self.current_spawned_line = 0
-            self.current_spawned_tile += 1
 
         if self.current_spawned_tile < len(map_tile_list):
             list_of_x_cords = map_tile_list[self.current_spawned_tile].get_list_of_x_cords(self.blocks_on_screen)
+            print(list_of_x_cords)
             self.next_line_to_spawn = list_of_x_cords
+
+        self.current_spawned_line += 1
+
