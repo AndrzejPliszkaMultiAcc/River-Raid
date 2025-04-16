@@ -2,7 +2,7 @@ import pygame
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, speed=5, color=(255, 0, 0), width=5, height=10):
+    def __init__(self, x, y, speed=10, color=(255, 0, 0), width=5, height=10):
         super().__init__()
         self.image = pygame.Surface((width, height))
         self.image.fill(color)
