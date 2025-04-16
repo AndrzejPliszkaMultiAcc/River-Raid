@@ -2,6 +2,7 @@ import pygame
 import random
 from bullet import Bullet
 from fuel_tank import FuelTank
+from player import Player
 
 pygame.init()
 color = (255, 255, 255)
@@ -14,6 +15,9 @@ all_sprites = pygame.sprite.Group()
 fuel_tanks = pygame.sprite.Group()
 clock = pygame.time.Clock()
 
+player = Player(250, 485)
+all_sprites.add(player)
+
 running = True
 spawn_timer = 0
 while running:
@@ -24,7 +28,7 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                bullet = Bullet(250, 450) #current plane position
+                bullet = Bullet(player.rect.centerx, player.rect.centery) #current plane position
                 all_sprites.add(bullet)
 
     if spawn_timer <= 0:
