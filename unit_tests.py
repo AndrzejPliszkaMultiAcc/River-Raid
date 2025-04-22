@@ -56,6 +56,58 @@ class TestMapFunctions(unittest.TestCase):
         self.map_instance.update_next_line_to_spawn()
         self.assertTrue(len(self.map_instance.next_line_to_spawn) > 0)
 
+    def test_get_collisions_basic(self):
+        fake_surface = pygame.Surface((800, 600))
+        test_map = Map(fake_surface)
+
+        test_map.block_width = 40
+        test_map.block_height = 40
+        test_map.y_offset = 0
+
+        test_map.block_list = [[2, 3],[3, 3],[5, 4], [6, 5],[7, 5]]
+
+        y_pos = 115
+        height = 90
+        x_ranges = test_map.get_collisions(y_pos, height)
+        expected = [(80, 160), (200, 320)]
+        assert x_ranges == expected
+
+    def test_get_collisions_advanced(self):
+        fake_surface = pygame.Surface((800, 600))
+        test_map = Map(fake_surface)
+
+        test_map.block_width = 40
+        test_map.block_height = 40
+        test_map.y_offset = 0
+
+        test_map.block_list = [
+            [1, 2], [2, 2], [3, 2]
+        ]
+
+        y_pos = 80
+        height = 40
+        x_ranges = test_map.get_collisions(y_pos, height)
+
+        expected = [(40, 160)]
+        assert x_ranges == expected
+
+    def test_get_collisions_gaps(self):
+        fake_surface = pygame.Surface((800, 600))
+        test_map = Map(fake_surface)
+
+        test_map.block_width = 40
+        test_map.block_height = 40
+        test_map.y_offset = 0
+
+        test_map.block_list = [[1, 3], [3, 3], [6, 3]]
+
+        y_pos = 120
+        height = 40
+        x_ranges = test_map.get_collisions(y_pos, height)
+
+        expected = [(40, 80), (120, 160), (240, 280)]  # oddzielne bloki
+        assert x_ranges == expected
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,13 +1,15 @@
 from enum import Enum
 import pygame
 
+# This class represents part of map in which all rows (in some height) are the same
 class MapTile:
     def __init__(self, height, width, expand_from_walls, offset):
-        self.height = height
-        self.width = width
-        self.fill_expand_from_walls = expand_from_walls
-        self.offset = offset
+        self.height = height # Number of blocks the structure will occupy vertically
+        self.width = width # Block to which the structure will be expanded
+        self.fill_expand_from_walls = expand_from_walls # If False, structure will expand from center
+        self.offset = offset # Number of blocks which will be added to the left and right side of the structure
 
+    # Used to get list of x coordinates of blocks given parameters of tile (and number of horizontal blocks)
     def get_list_of_x_cords(self, block_width):
         list_of_x_cords = []
         if self.fill_expand_from_walls:
@@ -23,47 +25,39 @@ class MapTile:
 
         return list_of_x_cords
 
+# This class lists all structures of map
 class TerrainStructures(Enum):
     STRAIGHT_CORRIDOR = [
-        MapTile(1, 1, True, 0),
-        MapTile(1, 2, True, 0),
-        MapTile(1, 3, True, 0),
-        MapTile(1, 4, True, 0),
-        MapTile(1, 5, True, 0),
-        MapTile(1, 6, True, 0),
-        MapTile(5, 7, True, 0),
-        MapTile(1, 6, True, 0),
-        MapTile(1, 5, True, 0),
-        MapTile(1, 4, True, 0),
-        MapTile(1, 3, True, 0),
-        MapTile(1, 2, True, 0),
-        MapTile(1, 1, True, 0),
+        MapTile(2, 1, True, 1),
+        MapTile(2, 2, True, 2),
     ]
 
 class Map:
     def __init__(self, surface):
-        self.surface = surface
-        self.screen_width = surface.get_width()
-        self.screen_height = surface.get_height()
-        self.block_list = []
-        self.y_offset = 0
-        self.velocity = 10 #max 24, min 1
-        self.blocks_on_screen = 20
-        self.block_width = self.screen_width / self.blocks_on_screen
-        self.block_height = self.screen_height / self.blocks_on_screen
-        self.next_line_to_spawn = []
-        self.current_spawned_line = 0
-        self.current_spawned_tile = 0
-        self.map_structures = [TerrainStructures.STRAIGHT_CORRIDOR]
+        self.surface = surface # Canvas on which the map will be drawn
+        self.screen_width = surface.get_width() # Screen width in pixels
+        self.screen_height = surface.get_height() # Screen height in pixels
+        self.block_list = [] # List of all blocks on the screen
+        self.y_offset = 0 # Offset of blocks in relation to full block (always positive)
+        self.velocity = 10 #max 24, min 1, INTENDED TO BE MODIFIED IN RUNTIME
+        self.blocks_on_screen = 20 # Number of blocks on the screen
+        self.block_width = self.screen_width / self.blocks_on_screen # Width of one block in pixels (read only)
+        self.block_height = self.screen_height / self.blocks_on_screen # Height of one block in pixels (read only)
+        self.next_line_to_spawn = [] # List of x coordinates of blocks which will be spawned next
+        self.current_spawned_line = 0 # Current spawned line of map tile
+        self.current_spawned_tile = 0 # Current spawned tile of structure
+        self.map_structures = [TerrainStructures.STRAIGHT_CORRIDOR] # List of structures displayed in order (creates map)
         self.current_spawned_structure_index = 0
         self.current_spawned_structure = self.map_structures[self.current_spawned_structure_index]
 
+    #Displays all blocks (needs to be done after clearing screen every frame)
     def display_saved_blocks(self):
         for block in self.block_list:
             x_pos = block[0] * self.block_width
             y_pos = block[1] * self.block_height + self.y_offset
             pygame.draw.rect(self.surface, (0, 255, 0), [x_pos, y_pos, self.block_width, self.block_height])
 
+    # Moves blocks down the screen according to velocity
     def move_blocks(self):
         if self.block_height < self.y_offset + self.velocity:
             for block in self.block_list:
@@ -74,9 +68,11 @@ class Map:
         else:
             self.y_offset = self.y_offset + self.velocity
 
+    # Removes blocks which are not on the screen
     def remove_redundant_blocks(self):
         self.block_list = [x for x in self.block_list if x[1] <= self.blocks_on_screen]
 
+    # Spawns set line of blocks on the screen
     def spawn_line(self, list_of_x_cords):
         if any(point[1] <= -1 for point in self.block_list):
             return False
@@ -85,6 +81,7 @@ class Map:
                 self.block_list.append([x_cord, -1])
             return True
 
+    # Logic related to choosing what to spawn next
     def update_next_line_to_spawn(self):
         map_tile_list = self.current_spawned_structure.value
 
@@ -102,7 +99,58 @@ class Map:
 
         if self.current_spawned_tile < len(map_tile_list):
             list_of_x_cords = map_tile_list[self.current_spawned_tile].get_list_of_x_cords(self.blocks_on_screen)
-            print(list_of_x_cords)
             self.next_line_to_spawn = list_of_x_cords
 
         self.current_spawned_line += 1
+
+    # USE THIS FOR COLLISION!
+    # Params: y_pixel_pos - y position in pixels, always give most upper point!
+    #         height_pixels - height of area to check in pixels
+    #         draw_debug - if True, draws area of checking and blocks, use if you think function is malfunctioning
+    # Returns list of tuples with ranges where are blocks (so if x coordinate is in range, there should be collision)
+    def get_collisions(self, y_pos, height, draw_debug=False):
+        y_start = y_pos
+        y_end = y_pos + height
+
+        # Bloki mogą się kończyć w połowie przedziału, więc musimy dokładnie sprawdzić każdy
+        wall_blocks = []
+
+        for block in self.block_list:
+            block_y_start = block[1] * self.block_height + self.y_offset
+            block_y_end = block_y_start + self.block_height
+
+            # Sprawdź czy przedział gracza nachodzi na blok w pionie
+            if block_y_end >= y_start and block_y_start <= y_end:
+                wall_blocks.append(block)
+
+        # Zbieramy wszystkie x w pikselach
+        x_pixels = [block[0] * self.block_width for block in wall_blocks]
+        x_pixels.sort()
+
+        # Tworzenie przedziałów ciągłych
+        x_ranges = []
+        if x_pixels:
+            range_start = x_pixels[0]
+            last_x = x_pixels[0]
+
+            for x in x_pixels[1:]:
+                if x <= last_x + self.block_width:
+                    last_x = x
+                else:
+                    x_ranges.append((range_start, last_x + self.block_width))
+                    range_start = x
+                    last_x = x
+
+            x_ranges.append((range_start, last_x + self.block_width))
+
+        # Debug — obszar sprawdzania
+        if draw_debug:
+            pygame.draw.rect(self.surface, (255, 0, 0),
+                             pygame.Rect(0, y_start, self.screen_width, height), 1)
+
+            for x_start, x_end in x_ranges:
+                pygame.draw.rect(
+                    self.surface, (0, 255, 255),
+                    pygame.Rect(x_start, y_start, x_end - x_start, height), 1)
+
+        return x_ranges
