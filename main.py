@@ -1,4 +1,8 @@
 import pygame
+import map
+import time
+
+from map import TerrainStructures
 import random
 from bullet import Bullet
 from fuel_tank import FuelTank
@@ -7,6 +11,7 @@ from player import Player
 pygame.init()
 color = (255, 255, 255)
 position = (0, 0)
+canvas = pygame.display.set_mode((500, 500))
 
 canvas = pygame.display.set_mode((500, 500))
 pygame.display.set_caption("River Raid")
@@ -19,10 +24,13 @@ player = Player(250, 485)
 all_sprites.add(player)
 
 running = True
+map_object = map.Map(canvas)
 spawn_timer = 0
 while running:
     canvas.fill((0, 0, 0))
-
+    map_object.move_blocks()
+    map_object.display_saved_blocks()
+    map_object.remove_redundant_blocks()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
