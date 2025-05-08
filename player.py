@@ -1,4 +1,5 @@
 import pygame
+from map import Map
 
 
 class Player(pygame.sprite.Sprite):
@@ -8,20 +9,27 @@ class Player(pygame.sprite.Sprite):
         self.image.fill(color)
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = speed
+        self.game_map = None
+        self.map_speed_changed = False
 
     def update(self):
         keys = pygame.key.get_pressed()
 
-        # Ruch w górę, jeśli nie jesteśmy przy górnej krawędzi
-        if keys[pygame.K_w] and self.rect.top > 0:
-            self.rect.y -= self.speed
-        # Ruch w dół, jeśli nie jesteśmy przy dolnej krawędzi
-        if keys[pygame.K_s] and self.rect.bottom < 500:  # 500 to wysokość okna
-            self.rect.y += self.speed
-        # Ruch w lewo, jeśli nie jesteśmy przy lewej krawędzi
+        # Moving right unless player is at the edge
         if keys[pygame.K_a] and self.rect.left > 0:
             self.rect.x -= self.speed
-        # Ruch w prawo, jeśli nie jesteśmy przy prawej krawędzi
+        # Moving right unless the player is at the edge
         if keys[pygame.K_d] and self.rect.right < 500:  # 500 to szerokość okna
             self.rect.x += self.speed
+
+        if self.game_map:
+            if keys[pygame.K_w] and not self.map_speed_changed:
+                self.game_map.velocity = min(24, self.game_map.base_velocity + 5)
+                self.map_speed_changed = True
+            elif keys[pygame.K_s] and not self.map_speed_changed:
+                self.game_map.velocity = max(1, self.game_map.base_velocity - 5)
+                self.map_speed_changed = True
+            elif not keys[pygame.K_w] and not keys[pygame.K_s]:
+                self.game_map.velocity = self.game_map.base_velocity
+                self.map_speed_changed = False
 

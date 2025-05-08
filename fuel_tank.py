@@ -1,7 +1,7 @@
 import pygame
 
 class FuelTank(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, game_map=None):
         super().__init__()
         self.image = pygame.Surface((20, 30))
         self.image.fill((255, 255, 0))
@@ -14,7 +14,9 @@ class FuelTank(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center=(x, y))
 
+        self.game_map = game_map
+
     def update(self):
-        self.rect.y += 2
+        self.rect.y += self.game_map.velocity
         if self.rect.top > 500:
             self.kill()
