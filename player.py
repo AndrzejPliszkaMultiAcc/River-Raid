@@ -25,3 +25,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_d] and self.rect.right < 500:  # 500 to szerokość okna
             self.rect.x += self.speed
 
+    def collect_fuel(self, fuel_tanks, hud):
+        hits = pygame.sprite.spritecollide(self, fuel_tanks, dokill=True)
+        for hit in hits:
+            hud.add_energy(20)
