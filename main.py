@@ -20,10 +20,9 @@ fuel_tanks = pygame.sprite.Group()
 clock = pygame.time.Clock()
 
 player = Player(250, 485)
-all_sprites.add(player)
-
-
 map_object = map.Map(canvas)
+player.game_map = map_object
+all_sprites.add(player)
 hud = HUD(canvas)
 
 spawn_timer = 0

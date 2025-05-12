@@ -2,7 +2,7 @@ import pygame
 import random
 
 class FuelTank(pygame.sprite.Sprite):
-    def __init__(self, x, y, map_instance):
+    def __init__(self, x, y, game_map=None):=
         super().__init__()
         self.image = pygame.Surface((20, 30))
         self.image.fill((255, 255, 0))
@@ -15,8 +15,10 @@ class FuelTank(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.map = map_instance
 
+        self.game_map = game_map
+
     def update(self):
-        self.rect.y += self.map.velocity
+        self.rect.y += self.game_map.velocity
         if self.rect.top > self.map.screen_height:
             self.kill()
 
