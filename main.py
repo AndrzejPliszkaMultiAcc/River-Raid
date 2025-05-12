@@ -21,10 +21,12 @@ fuel_tanks = pygame.sprite.Group()
 clock = pygame.time.Clock()
 
 player = Player(250, 485)
+map_object = map.Map(canvas)
+player.game_map = map_object
 all_sprites.add(player)
 
 running = True
-map_object = map.Map(canvas)
+
 spawn_timer = 0
 while running:
     canvas.fill((0, 0, 0))
@@ -41,7 +43,7 @@ while running:
 
     if spawn_timer <= 0:
         x = random.randint(50, 450)
-        fuel_tank = FuelTank(x, -20)
+        fuel_tank = FuelTank(x, -20, game_map=map_object)
         all_sprites.add(fuel_tank)
         fuel_tanks.add(fuel_tank)
         spawn_timer = random.randint(60, 180)
