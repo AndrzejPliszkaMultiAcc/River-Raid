@@ -54,6 +54,23 @@ class TerrainStructures(Enum):
         MapTile(7, 2, True, 0),
         MapTile(6, 5, True, 0),
     ]
+    MAP3 = [
+        MapTile(10, 6, True, 0),
+        MapTile(6, 4, True, 0),
+        MapTile(8, 3, True, 0),
+        MapTile(10, 5, True, 0),
+        MapTile(9, 4, True, 0),
+        MapTile(7, 3, True, 0),
+        MapTile(5, 9, False, 4),
+        MapTile(12, 8, False, 3),
+        MapTile(6, 3, True, 0),
+        MapTile(7, 6, True, 0),
+        MapTile(4, 4, True, 0),
+        MapTile(10, 8, False, 2),
+        MapTile(9, 7, False, 2),
+        MapTile(10, 4, True, 0),
+        MapTile(10, 8, True, 0),
+    ]
 
 class Map:
     def __init__(self, surface):
@@ -69,7 +86,7 @@ class Map:
         self.next_line_to_spawn = [] # List of x coordinates of blocks which will be spawned next
         self.current_spawned_line = 0 # Current spawned line of map tile
         self.current_spawned_tile = 0 # Current spawned tile of structure
-        self.map_structures = [TerrainStructures.STRAIGHT_CORRIDOR, TerrainStructures.MAP2, TerrainStructures.STRAIGHT_CORRIDOR, TerrainStructures.MAP1] # List of structures displayed in order (creates map)
+        self.map_structures = [TerrainStructures.STRAIGHT_CORRIDOR, TerrainStructures.MAP1, TerrainStructures.STRAIGHT_CORRIDOR, TerrainStructures.MAP2,  TerrainStructures.STRAIGHT_CORRIDOR, TerrainStructures.MAP3] # List of structures displayed in order (creates map)
         self.current_spawned_structure_index = 0
         self.current_spawned_structure = self.map_structures[self.current_spawned_structure_index]
 
