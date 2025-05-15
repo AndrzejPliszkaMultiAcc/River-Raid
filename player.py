@@ -21,6 +21,7 @@ class Player(pygame.sprite.Sprite):
         # Moving right unless the player is at the edge
         if keys[pygame.K_d] and self.rect.right < 500:  # 500 to szerokość okna
             self.rect.x += self.speed
+
         if self.game_map:
             if keys[pygame.K_w] and not self.map_speed_changed:
                 self.game_map.velocity = min(24, self.game_map.base_velocity + 5)
@@ -32,7 +33,3 @@ class Player(pygame.sprite.Sprite):
                 self.game_map.velocity = self.game_map.base_velocity
                 self.map_speed_changed = False
 
-    def collect_fuel(self, fuel_tanks, hud):
-        hits = pygame.sprite.spritecollide(self, fuel_tanks, dokill=True)
-        for hit in hits:
-            hud.add_energy(20)

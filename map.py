@@ -27,49 +27,9 @@ class MapTile:
 
 # This class lists all structures of map
 class TerrainStructures(Enum):
-    MAP1 = [
-        MapTile(20, 6, True, 0),
-        MapTile(20, 5, True, 0),
-        MapTile(20, 6, True, 0),
-        MapTile(20, 5, True, 0),
-        MapTile(20, 6, True, 0),
-    ]
     STRAIGHT_CORRIDOR = [
-        MapTile(10, 7, True, 0),
-    ]
-    MAP2 = [
-        MapTile(6, 5, True, 0),
-        MapTile(6, 4, True, 0),
-        MapTile(2, 3, True, 0),
-        MapTile(6, 4, True, 0),
-        MapTile(6, 3, True, 0),
-        MapTile(3, 2, True, 0),
-        MapTile(14, 8, False, 2),
-        MapTile(3, 3, True, 0),
-        MapTile(7, 5, True, 0),
-        MapTile(5, 3, True, 0),
-        MapTile(6, 2, True, 0),
-        MapTile(8, 8, False, 2),
-        MapTile(3, 9, False, 2),
-        MapTile(7, 2, True, 0),
-        MapTile(6, 5, True, 0),
-    ]
-    MAP3 = [
-        MapTile(10, 6, True, 0),
-        MapTile(6, 4, True, 0),
-        MapTile(8, 3, True, 0),
-        MapTile(10, 5, True, 0),
-        MapTile(9, 4, True, 0),
-        MapTile(7, 3, True, 0),
-        MapTile(5, 9, False, 4),
-        MapTile(12, 8, False, 3),
-        MapTile(6, 3, True, 0),
-        MapTile(7, 6, True, 0),
-        MapTile(4, 4, True, 0),
-        MapTile(10, 8, False, 2),
-        MapTile(9, 7, False, 2),
-        MapTile(10, 4, True, 0),
-        MapTile(10, 8, True, 0),
+        MapTile(2, 1, True, 1),
+        MapTile(2, 2, True, 2),
     ]
 
 class Map:
@@ -87,7 +47,7 @@ class Map:
         self.next_line_to_spawn = [] # List of x coordinates of blocks which will be spawned next
         self.current_spawned_line = 0 # Current spawned line of map tile
         self.current_spawned_tile = 0 # Current spawned tile of structure
-        self.map_structures = [TerrainStructures.STRAIGHT_CORRIDOR, TerrainStructures.MAP1, TerrainStructures.STRAIGHT_CORRIDOR, TerrainStructures.MAP2,  TerrainStructures.STRAIGHT_CORRIDOR, TerrainStructures.MAP3] # List of structures displayed in order (creates map)
+        self.map_structures = [TerrainStructures.STRAIGHT_CORRIDOR] # List of structures displayed in order (creates map)
         self.current_spawned_structure_index = 0
         self.current_spawned_structure = self.map_structures[self.current_spawned_structure_index]
 
