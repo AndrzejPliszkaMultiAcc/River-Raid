@@ -1,6 +1,9 @@
+
 import unittest
 import pygame
+from player import Player
 from enum import Enum
+from unittest import mock
 from map import MapTile, Map
 
 
@@ -107,6 +110,37 @@ class TestMapFunctions(unittest.TestCase):
 
         expected = [(40, 80), (120, 160), (240, 280)]  # oddzielne bloki
         assert x_ranges == expected
+
+
+class TestPlayer(unittest.TestCase):
+    def setUp(self):
+        pygame.init()
+        self.surface = pygame.Surface((500, 500))
+        self.map_instance = Map(self.surface)
+        self.player = Player(250, 485)
+        self.player.game_map = self.map_instance
+
+    def test_initial_position(self):
+        self.assertEqual(self.player.rect.centerx, 250)
+        self.assertEqual(self.player.rect.centery, 485)
+
+    def test_player_does_not_move_beyond_left_boundary(self):
+        self.player.rect.left = 0
+        keys = [False] * 512
+        keys[pygame.K_a] = True
+
+        with unittest.mock.patch('pygame.key.get_pressed', return_value=keys):
+            self.player.update()
+            self.assertEqual(self.player.rect.left, 0)
+
+    def test_player_moves_right(self):
+        old_x = self.player.rect.x
+        keys = [False] * 512
+        keys[pygame.K_d] = True
+
+        with unittest.mock.patch('pygame.key.get_pressed', return_value=keys):
+            self.player.update()
+            self.assertGreater(self.player.rect.x, old_x)
 
 
 if __name__ == '__main__':
