@@ -36,3 +36,9 @@ class Player(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, fuel_tanks, dokill=True)
         for hit in hits:
             hud.add_energy(20)
+
+    def check_if_hit_by_enemy(self, enemies):
+        hits = pygame.sprite.spritecollide(self, enemies, dokill=True)
+        for hit in hits:
+            #call function ending the game
+            pygame.quit()
