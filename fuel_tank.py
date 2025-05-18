@@ -1,6 +1,7 @@
 import pygame
 import random
 
+
 class FuelTank(pygame.sprite.Sprite):
     def __init__(self, x, y, game_map=None):
         super().__init__()

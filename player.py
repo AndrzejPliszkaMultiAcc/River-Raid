@@ -32,13 +32,14 @@ class Player(pygame.sprite.Sprite):
                 self.game_map.velocity = self.game_map.base_velocity
                 self.map_speed_changed = False
 
+        if self.game_map:
+            collision_ranges = self.game_map.get_collisions(self.rect.top, self.rect.height)
+            for (start_x, end_x) in collision_ranges:
+                if not (self.rect.right < start_x or self.rect.left > end_x):
+                    print("kolizja")
+                    break
+
     def collect_fuel(self, fuel_tanks, hud):
         hits = pygame.sprite.spritecollide(self, fuel_tanks, dokill=True)
         for hit in hits:
             hud.add_energy(20)
-
-    def check_if_hit_by_enemy(self, enemies):
-        hits = pygame.sprite.spritecollide(self, enemies, dokill=True)
-        for hit in hits:
-            #call function ending the game
-            pygame.quit()
