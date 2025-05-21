@@ -2,6 +2,7 @@
 import unittest
 import pygame
 from player import Player
+from bullet import Bullet
 from enum import Enum
 from unittest import mock
 from map import MapTile, Map
@@ -142,6 +143,65 @@ class TestPlayer(unittest.TestCase):
             self.player.update()
             self.assertGreater(self.player.rect.x, old_x)
 
+class DummyDestroyable(pygame.sprite.Sprite):
+    def __init__(self, x, y, width=10, height=10):
+        super().__init__()
+        self.image = pygame.Surface((width, height))
+        self.image.fill((0, 255, 0))
+        self.rect = self.image.get_rect(topleft=(x, y))
+
+class DummyMap:
+    def __init__(self, collision_ranges):
+        self.collision_ranges = collision_ranges
+
+    def get_collisions(self, y, height):
+        return self.collision_ranges
+
+class TestBullet(unittest.TestCase):
+    def setUp(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((300, 300))
+        self.bullet = Bullet(x=100, y=100)
+
+    def test_check_if_hit_destroyable_object_hit(self):
+        destroyable = DummyDestroyable(95, 95)  # Overlaps bullet
+        group = pygame.sprite.Group(destroyable)
+
+        all_sprites = pygame.sprite.Group(self.bullet)
+        self.assertIn(self.bullet, all_sprites)
+
+        self.bullet.check_if_hit_destroyable_object(group)
+
+        self.assertNotIn(destroyable, group)
+        self.assertFalse(self.bullet.alive())  # bullet should be killed
+
+    def test_check_if_hit_destroyable_object_no_hit(self):
+        destroyable = DummyDestroyable(200, 200)  # Far from bullet
+        group = pygame.sprite.Group(destroyable)
+
+        bullet_group = pygame.sprite.Group(self.bullet)  # Dodaj bullet do grupy
+        self.bullet.check_if_hit_destroyable_object(group)
+
+        self.assertIn(destroyable, group)
+        self.assertTrue(self.bullet.alive())  # Teraz będzie True, bo bullet jest w grupie
+
+    def test_check_if_hit_wall_hit(self):
+        # Bullet.x = 100, range includes 90-110 => hit
+        game_map = DummyMap(collision_ranges=[(90, 110)])
+        all_sprites = pygame.sprite.Group(self.bullet)
+
+        self.bullet.check_if_hit_wall(game_map)
+
+        self.assertFalse(self.bullet.alive())
+
+    def test_check_if_hit_wall_no_hit(self):
+        game_map = DummyMap(collision_ranges=[(0, 80), (120, 140)])
+        bullet_group = pygame.sprite.Group(self.bullet)  # Dodaj bullet do grupy
+        self.bullet.check_if_hit_wall(game_map)
+        self.assertTrue(self.bullet.alive())
+
+if __name__ == '__main__':
+    unittest.main()
 
 if __name__ == '__main__':
     unittest.main()
