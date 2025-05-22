@@ -1,4 +1,6 @@
-
+from bullet import Bullet
+from fuel_tank import FuelTank
+from hud import HUD
 import unittest
 import pygame
 from player import Player
@@ -206,6 +208,98 @@ class TestPlayer(unittest.TestCase):
             self.player.check_if_hit_by_enemy(enemy_group)
             mock_quit.assert_called_once()
 
+class TestBullet(unittest.TestCase):
+    def setUp(self):
+        self.bullet = Bullet(100, 100)
+
+    def test_bullet_initialization(self):
+        self.assertEqual(self.bullet.rect.centerx, 100)
+        self.assertEqual(self.bullet.rect.centery, 100)
+        self.assertEqual(self.bullet.speed, 10)
+
+    def test_bullet_update_movement(self):
+        initial_y = self.bullet.rect.y
+        self.bullet.update()
+        self.assertEqual(self.bullet.rect.y, initial_y - self.bullet.speed)
+
+    def test_bullet_kill_when_out_of_screen(self):
+        self.bullet.rect.bottom = -1
+        self.bullet.update()
+        self.assertFalse(self.bullet.alive())
+
+    def test_bullet_hit_destroyable_object(self):
+        destroyable = pygame.sprite.Sprite()
+        destroyable.rect = pygame.Rect(100, 100, 10, 10)
+        group = pygame.sprite.Group(destroyable)
+
+        self.bullet.check_if_hit_destroyable_object(group)
+        self.assertEqual(len(group), 0)
+        self.assertFalse(self.bullet.alive())
+
+    def test_bullet_hit_wall(self):
+        mock_map = mock.MagicMock()
+        mock_map.get_collisions.return_value = [(95, 105)]
+
+        self.bullet.check_if_hit_wall(mock_map)
+        self.assertFalse(self.bullet.alive())
+
+class TestFuelTank(unittest.TestCase):
+    def setUp(self):
+        pygame.init()
+        self.surface = pygame.Surface((500, 500))
+        self.map_instance = Map(self.surface)
+        self.fuel_tank = FuelTank(100, 100, self.map_instance)
+
+    def test_fuel_tank_initialization(self):
+        self.assertEqual(self.fuel_tank.rect.centerx, 100)
+        self.assertEqual(self.fuel_tank.rect.centery, 100)
+
+    def test_fuel_tank_update_movement(self):
+        initial_y = self.fuel_tank.rect.y
+        self.map_instance.velocity = 5
+        self.fuel_tank.update()
+        self.assertEqual(self.fuel_tank.rect.y, initial_y + self.map_instance.velocity)
+
+    def test_fuel_tank_kill_when_out_of_screen(self):
+        self.fuel_tank.rect.top = self.map_instance.screen_height + 1
+        self.fuel_tank.update()
+        self.assertFalse(self.fuel_tank.alive())
+
+    def test_spawn_valid_returns_none_on_collision(self):
+        mock_map = mock.MagicMock()
+        mock_map.screen_width = 500
+        mock_map.get_collisions.return_value = [(0, 500)]  # Cały ekran jest zablokowany
+
+        result = FuelTank.spawn_valid(mock_map)
+        self.assertIsNone(result)
+
+
+class TestHUD(unittest.TestCase):
+    def setUp(self):
+        pygame.init()
+        self.surface = pygame.Surface((500, 500))
+        self.hud = HUD(self.surface)
+
+    def test_hud_initialization(self):
+        self.assertEqual(self.hud.energy, 100)
+        self.assertEqual(self.hud.energy_timer, 0)
+
+    def test_update_decreases_energy(self):
+        self.hud.energy_timer = 59
+        initial_energy = self.hud.energy
+        self.hud.update()
+        self.assertEqual(self.hud.energy, initial_energy - 5)
+        self.assertEqual(self.hud.energy_timer, 0)
+
+    def test_add_energy_with_limit(self):
+        self.hud.energy = 90
+        self.hud.add_energy(20)
+        self.assertEqual(self.hud.energy, 100)  # Nie powinno przekroczyć 100
+
+    def test_add_energy_normal(self):
+        self.hud.energy = 50
+        self.hud.add_energy(20)
+        self.assertEqual(self.hud.energy, 70)
 
 
 if __name__ == '__main__':
