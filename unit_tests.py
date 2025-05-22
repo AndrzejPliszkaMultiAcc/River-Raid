@@ -142,6 +142,71 @@ class TestPlayer(unittest.TestCase):
             self.player.update()
             self.assertGreater(self.player.rect.x, old_x)
 
+    def test_increase_map_speed_with_w_key(self):
+        self.map_instance.base_velocity = 10
+        self.map_instance.velocity = 10
+        keys = [False] * 512
+        keys[pygame.K_w] = True
+
+        with unittest.mock.patch('pygame.key.get_pressed', return_value=keys):
+            self.player.update()
+            self.assertEqual(self.map_instance.velocity, 15)
+            self.assertTrue(self.player.map_speed_changed)
+
+    def test_decrease_map_speed_with_s_key(self):
+        self.map_instance.base_velocity = 10
+        self.map_instance.velocity = 10
+        keys = [False] * 512
+        keys[pygame.K_s] = True
+
+        with unittest.mock.patch('pygame.key.get_pressed', return_value=keys):
+            self.player.update()
+            self.assertEqual(self.map_instance.velocity, 5)
+            self.assertTrue(self.player.map_speed_changed)
+
+    def test_reset_map_speed_when_no_keys_pressed(self):
+        self.player.map_speed_changed = True
+        self.map_instance.base_velocity = 10
+        self.map_instance.velocity = 20
+        keys = [False] * 512
+
+        with unittest.mock.patch('pygame.key.get_pressed', return_value=keys):
+            self.player.update()
+            self.assertEqual(self.map_instance.velocity, 10)
+            self.assertFalse(self.player.map_speed_changed)
+
+    def test_collision_detection_triggers_print(self):
+        self.map_instance.get_collisions = unittest.mock.MagicMock(return_value=[(200, 300)])
+        self.player.rect.left = 250
+        self.player.rect.right = 260
+        keys = [False] * 512
+
+        with unittest.mock.patch('pygame.key.get_pressed', return_value=keys), \
+             unittest.mock.patch('builtins.print') as mocked_print:
+            self.player.update()
+            mocked_print.assert_called_with("kolizja")
+
+    def test_collect_fuel_adds_energy(self):
+        fuel_tank = pygame.sprite.Sprite()
+        fuel_tank.rect = self.player.rect.copy()
+        fuel_group = pygame.sprite.Group(fuel_tank)
+
+        hud_mock = unittest.mock.MagicMock()
+        self.player.collect_fuel(fuel_group, hud_mock)
+
+        hud_mock.add_energy.assert_called_with(20)
+        self.assertEqual(len(fuel_group), 0)
+
+    def test_check_if_hit_by_enemy_triggers_quit(self):
+        enemy = pygame.sprite.Sprite()
+        enemy.rect = self.player.rect.copy()
+        enemy_group = pygame.sprite.Group(enemy)
+
+        with unittest.mock.patch('pygame.quit') as mock_quit:
+            self.player.check_if_hit_by_enemy(enemy_group)
+            mock_quit.assert_called_once()
+
+
 
 if __name__ == '__main__':
     unittest.main()
