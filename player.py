@@ -3,10 +3,9 @@ from map import Map
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, speed=5, color=(0, 0, 255), width=25, height=25):
+    def __init__(self, x, y, speed=5):
         super().__init__()
-        self.image = pygame.Surface((width, height))
-        self.image.fill(color)
+        self.image = pygame.image.load("ic4.png").convert_alpha()
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = speed
         self.game_map = None

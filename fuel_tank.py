@@ -4,13 +4,9 @@ import random
 class FuelTank(pygame.sprite.Sprite):
     def __init__(self, x, y, game_map=None):
         super().__init__()
-        self.image = pygame.Surface((20, 30))
-        self.image.fill((255, 255, 0))
-
-        font = pygame.font.Font(None, 24)
-        text = font.render("F", True, (0, 0, 0))
-        text_rect = text.get_rect(center=(10, 15))
-        self.image.blit(text, text_rect)
+        self.image = pygame.transform.scale(pygame.image.load("ic8.png").convert_alpha(), (30, 30))
+        self.rect = self.image.get_rect(center=(x, y))
+        self.map = game_map
 
         self.rect = self.image.get_rect(center=(x, y))
         self.map = game_map
