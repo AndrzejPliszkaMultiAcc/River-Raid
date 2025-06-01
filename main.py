@@ -32,6 +32,9 @@ fuel_tank_spawn_timer = 0
 enemy_spawn_timer = 0
 running = True
 
+main_music = pygame.mixer.Sound("sound/main_music.mp3")
+main_music.play(-1)
+
 while running:
     canvas.fill((0, 0, 0))
     map_object.move_blocks()
@@ -82,6 +85,9 @@ while running:
     clock.tick(60)
     #tymczasowe rozwiązanie na przegraną z powodu braku paliwa
     if hud.energy <= 0:
+        # Make function that ends the game here!
+        losing_sound = pygame.mixer.Sound("sound/lose_sound.mp3")
+        losing_sound.play()
         running = False
 
 pygame.quit()
