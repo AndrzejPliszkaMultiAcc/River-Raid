@@ -35,16 +35,24 @@ class Player(pygame.sprite.Sprite):
             collision_ranges = self.game_map.get_collisions(self.rect.top, self.rect.height)
             for (start_x, end_x) in collision_ranges:
                 if not (self.rect.right < start_x or self.rect.left > end_x):
+                    # Make function that ends the game here!
+                    losing_sound = pygame.mixer.Sound("sound/lose_sound.mp3")
+                    losing_sound.play()
                     print("kolizja")
                     break
 
     def collect_fuel(self, fuel_tanks, hud):
         hits = pygame.sprite.spritecollide(self, fuel_tanks, dokill=True)
         for hit in hits:
+            recharge_sound = pygame.mixer.Sound("sound/recharge_sound.mp3")
+            recharge_sound.play()
             hud.add_energy(20)
 
     def check_if_hit_by_enemy(self, enemies):
         hits = pygame.sprite.spritecollide(self, enemies, dokill=True)
         for hit in hits:
+            # Make function that ends the game here!
+            losing_sound = pygame.mixer.Sound("sound/lose_sound.mp3")
+            losing_sound.play()
             #call function ending the game
             pygame.quit()
