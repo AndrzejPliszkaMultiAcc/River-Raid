@@ -16,3 +16,18 @@ class Bullet(pygame.sprite.Sprite):
 
         if self.rect.bottom < 0:
             self.kill()
+
+    def check_if_hit_destroyable_object(self, destroyable_objects, increment_counter=None):
+        hits = pygame.sprite.spritecollide(self, destroyable_objects, dokill=True)
+        for hit in hits:
+            hit.kill()
+            self.kill()
+            if increment_counter:
+                increment_counter()
+
+    def check_if_hit_wall(self, map):
+        collisions = map.get_collisions(self.rect.y, self.rect.height)
+        for collision in collisions:
+            if collision[0] < self.rect.x < collision[1]:
+                self.kill()
+                break
