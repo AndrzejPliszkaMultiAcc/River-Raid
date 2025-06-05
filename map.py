@@ -91,12 +91,16 @@ class Map:
         self.current_spawned_structure_index = 0
         self.current_spawned_structure = self.map_structures[self.current_spawned_structure_index]
 
-    #Displays all blocks (needs to be done after clearing screen every frame)
+        # <-- ZMIANA: wczytanie i przeskalowanie obrazka bloku
+        self.block_image = pygame.image.load("ic9.png").convert_alpha()
+        self.block_image = pygame.transform.scale(self.block_image, (int(self.block_width), int(self.block_height)))
+
+    # <-- ZMIANA: wyświetlanie obrazków zamiast zielonych prostokątów
     def display_saved_blocks(self):
         for block in self.block_list:
             x_pos = block[0] * self.block_width
             y_pos = block[1] * self.block_height + self.y_offset
-            pygame.draw.rect(self.surface, (0, 255, 0), [x_pos, y_pos, self.block_width, self.block_height])
+            self.surface.blit(self.block_image, (x_pos, y_pos))  # <-- ZMIANA
 
     # Moves blocks down the screen according to velocity
     def move_blocks(self):
