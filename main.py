@@ -16,6 +16,9 @@ position = (0, 0)
 canvas = pygame.display.set_mode((500, 500))
 pygame.display.set_caption("River Raid")
 
+background_image = pygame.image.load("ic11.png").convert()
+background_image = pygame.transform.scale(background_image, (500, 500))
+
 all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 fuel_tanks = pygame.sprite.Group()
@@ -36,7 +39,7 @@ main_music = pygame.mixer.Sound("sound/main_music.mp3")
 main_music.play(-1)
 
 while running:
-    canvas.fill((0, 0, 0))
+    canvas.blit(background_image, (0, 0))
     map_object.move_blocks()
     map_object.display_saved_blocks()
     map_object.remove_redundant_blocks()

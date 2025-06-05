@@ -79,7 +79,7 @@ class Map:
         self.screen_height = surface.get_height() # Screen height in pixels
         self.block_list = [] # List of all blocks on the screen
         self.y_offset = 0 # Offset of blocks in relation to full block (always positive)
-        self.base_velocity = 10  #
+        self.base_velocity = 7  #
         self.velocity = self.base_velocity #max 24, min 1, INTENDED TO BE MODIFIED IN RUNTIME
         self.blocks_on_screen = 20 # Number of blocks on the screen
         self.block_width = self.screen_width / self.blocks_on_screen # Width of one block in pixels (read only)

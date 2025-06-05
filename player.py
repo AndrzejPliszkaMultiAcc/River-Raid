@@ -22,10 +22,10 @@ class Player(pygame.sprite.Sprite):
             self.rect.x += self.speed
         if self.game_map:
             if keys[pygame.K_w] and not self.map_speed_changed:
-                self.game_map.velocity = min(24, self.game_map.base_velocity + 5)
+                self.game_map.velocity = min(24, self.game_map.base_velocity + 3)
                 self.map_speed_changed = True
             elif keys[pygame.K_s] and not self.map_speed_changed:
-                self.game_map.velocity = max(1, self.game_map.base_velocity - 5)
+                self.game_map.velocity = max(1, self.game_map.base_velocity - 3)
                 self.map_speed_changed = True
             elif not keys[pygame.K_w] and not keys[pygame.K_s]:
                 self.game_map.velocity = self.game_map.base_velocity
