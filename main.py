@@ -1,8 +1,5 @@
 import pygame
 import map
-import time
-
-from map import TerrainStructures
 import random
 from bullet import Bullet
 from fuel_tank import FuelTank
@@ -11,6 +8,7 @@ from player import Player
 from hud import HUD
 
 pygame.init()
+pygame.display.init()
 color = (255, 255, 255)
 position = (0, 0)
 canvas = pygame.display.set_mode((500, 500))
@@ -38,20 +36,49 @@ running = True
 main_music = pygame.mixer.Sound("sound/main_music.mp3")
 main_music.play(-1)
 
-while running:
-    canvas.blit(background_image, (0, 0))
-    map_object.move_blocks()
-    map_object.display_saved_blocks()
-    map_object.remove_redundant_blocks()
 
+def reset_game():
+    global all_sprites, bullets, fuel_tanks, enemies
+    global player, map_object
+    global fuel_tank_spawn_timer, enemy_spawn_timerd
+
+    all_sprites.empty()
+    bullets.empty()
+    fuel_tanks.empty()
+    enemies.empty()
+    
+
+    player = Player(250, 485)
+    map_object = map.Map(canvas)
+    player.game_map = map_object
+    all_sprites.add(player)
+    
+
+    fuel_tank_spawn_timer = 0
+    enemy_spawn_timer = 0
+
+    hud.reset_stats()
+
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and not hud.game_over:
                 bullet = Bullet(player.rect.centerx, player.rect.centery) #current plane position
                 bullets.add(bullet)
                 all_sprites.add(bullet)
+            elif event.key == pygame.K_p and hud.game_over:
+                reset_game()
+    
+    if hud.game_over:
+        hud.show_game_over_screen()
+        continue
+
+    canvas.blit(background_image, (0, 0))
+    map_object.move_blocks()
+    map_object.display_saved_blocks()
+    map_object.remove_redundant_blocks()
 
     if fuel_tank_spawn_timer <= 0:
         fuel_tank = FuelTank.spawn_valid(map_object)
@@ -74,9 +101,17 @@ while running:
 
     hud.update()
     player.collect_fuel(fuel_tanks, hud)
-    player.check_if_hit_by_enemy(enemies)
+    
+
+    if player.check_if_hit_by_enemy(enemies):
+        hud.game_over = True
+        
+
+    if not player.is_alive:
+        hud.game_over = True
+        
     for bullet in bullets:
-        bullet.check_if_hit_destroyable_object(enemies)
+        bullet.check_if_hit_destroyable_object(enemies, hud.increment_defeated_enemies)
         bullet.check_if_hit_destroyable_object(fuel_tanks)
         bullet.check_if_hit_wall(map_object)
 
@@ -91,6 +126,6 @@ while running:
         # Make function that ends the game here!
         losing_sound = pygame.mixer.Sound("sound/lose_sound.mp3")
         losing_sound.play()
-        running = False
+        player.is_alive = False
 
 pygame.quit()

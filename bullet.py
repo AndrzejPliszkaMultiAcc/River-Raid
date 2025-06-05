@@ -19,8 +19,8 @@ class Bullet(pygame.sprite.Sprite):
 
         if self.rect.bottom < 0:
             self.kill()
-
-    def check_if_hit_destroyable_object(self, destroyable_objects):
+            
+    def check_if_hit_destroyable_object(self, destroyable_objects, increment_counter=None):
         hits = pygame.sprite.spritecollide(self, destroyable_objects, dokill=True)
         for hit in hits:
             breaking_sound = pygame.mixer.Sound("sound/explosion_sound.mp3")
@@ -35,6 +35,8 @@ class Bullet(pygame.sprite.Sprite):
             breaking_sound.play()
             hit.kill()
             self.kill()
+            if increment_counter:
+                increment_counter()
 
     def check_if_hit_wall(self, map):
         collisions = map.get_collisions(self.rect.y, self.rect.height)
