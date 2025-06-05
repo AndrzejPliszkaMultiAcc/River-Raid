@@ -30,12 +30,13 @@ fuel_tank_spawn_timer = 0
 enemy_spawn_timer = 0
 running = True
 
+main_music = pygame.mixer.Sound("sound/main_music.mp3")
+main_music.play(-1)
+
 def reset_game():
     global all_sprites, bullets, fuel_tanks, enemies
     global player, map_object
-    global fuel_tank_spawn_timer, enemy_spawn_timer
-    main_music = pygame.mixer.Sound("sound/main_music.mp3")
-    main_music.play(-1)
+    global fuel_tank_spawn_timer, enemy_spawn_timerd
 
     all_sprites.empty()
     bullets.empty()
@@ -122,6 +123,6 @@ while running:
         # Make function that ends the game here!
         losing_sound = pygame.mixer.Sound("sound/lose_sound.mp3")
         losing_sound.play()
-        running = False
+        player.is_alive = False
 
 pygame.quit()
