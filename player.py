@@ -3,13 +3,15 @@ from map import Map
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, speed=5):
+    def __init__(self, x, y, speed=5, color=(0, 0, 255), width=25, height=25):
         super().__init__()
-        self.image = pygame.image.load("ic4.png").convert_alpha()
+        self.image = pygame.Surface((width, height))
+        self.image.fill(color)
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = speed
         self.game_map = None
         self.map_speed_changed = False
+        self.is_alive = True
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -34,7 +36,7 @@ class Player(pygame.sprite.Sprite):
             collision_ranges = self.game_map.get_collisions(self.rect.top, self.rect.height)
             for (start_x, end_x) in collision_ranges:
                 if not (self.rect.right < start_x or self.rect.left > end_x):
-                    # Make function that ends the game here!
+                    self.is_alive = False
                     losing_sound = pygame.mixer.Sound("sound/lose_sound.mp3")
                     losing_sound.play()
                     print("kolizja")
@@ -49,9 +51,7 @@ class Player(pygame.sprite.Sprite):
 
     def check_if_hit_by_enemy(self, enemies):
         hits = pygame.sprite.spritecollide(self, enemies, dokill=True)
-        for hit in hits:
-            # Make function that ends the game here!
+        if hits:
             losing_sound = pygame.mixer.Sound("sound/lose_sound.mp3")
             losing_sound.play()
-            #call function ending the game
-            pygame.quit()
+            self.is_alive = False
