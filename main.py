@@ -34,7 +34,8 @@ def reset_game():
     global all_sprites, bullets, fuel_tanks, enemies
     global player, map_object
     global fuel_tank_spawn_timer, enemy_spawn_timer
-    
+    main_music = pygame.mixer.Sound("sound/main_music.mp3")
+    main_music.play(-1)
 
     all_sprites.empty()
     bullets.empty()
@@ -116,5 +117,11 @@ while running:
 
     pygame.display.update()
     clock.tick(60)
+    #tymczasowe rozwiązanie na przegraną z powodu braku paliwa
+    if hud.energy <= 0:
+        # Make function that ends the game here!
+        losing_sound = pygame.mixer.Sound("sound/lose_sound.mp3")
+        losing_sound.play()
+        running = False
 
 pygame.quit()

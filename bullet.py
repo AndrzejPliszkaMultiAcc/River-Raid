@@ -9,6 +9,9 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = speed
 
+        bullet_sound = pygame.mixer.Sound("sound/gun_sound.mp3")
+        bullet_sound.play()
+
     def update(self):
 
         self.rect.y -= self.speed
@@ -16,10 +19,20 @@ class Bullet(pygame.sprite.Sprite):
 
         if self.rect.bottom < 0:
             self.kill()
-
-    def check_if_hit_destroyable_object(self, destroyable_objects, increment_counter=None):
+            
+    def check_if_hit_destroyable_object(self, destroyable_objects):
         hits = pygame.sprite.spritecollide(self, destroyable_objects, dokill=True)
         for hit in hits:
+            breaking_sound = pygame.mixer.Sound("sound/explosion_sound.mp3")
+            breaking_sound.play()
+            breaking_sound.play()
+            breaking_sound.play()
+            breaking_sound.play()
+            breaking_sound.play()
+            breaking_sound.play()
+            breaking_sound.play()
+            breaking_sound.play()
+            breaking_sound.play()
             hit.kill()
             self.kill()
             if increment_counter:

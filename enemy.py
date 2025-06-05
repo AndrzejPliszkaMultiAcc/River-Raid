@@ -6,8 +6,7 @@ import random
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, game_map=None):
         super().__init__()
-        self.image = pygame.Surface((60, 60))
-        self.image.fill((255, 0, 0))
+        self.image = pygame.transform.scale(pygame.image.load("ic7.png").convert_alpha(), (60, 60))
         self.rect = self.image.get_rect(center=(x, y))
         self.map = game_map
 
