@@ -4,7 +4,7 @@ import random
 class FuelTank(pygame.sprite.Sprite):
     def __init__(self, x, y, game_map=None):
         super().__init__()
-        self.image = pygame.transform.scale(pygame.image.load("ic8.png").convert_alpha(), (30, 30))
+        self.image = pygame.transform.scale(pygame.image.load("ic10.jpg").convert_alpha(), (30, 30))
         self.rect = self.image.get_rect(center=(x, y))
         self.map = game_map
 

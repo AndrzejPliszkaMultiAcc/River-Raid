@@ -79,7 +79,7 @@ class Map:
         self.screen_height = surface.get_height() # Screen height in pixels
         self.block_list = [] # List of all blocks on the screen
         self.y_offset = 0 # Offset of blocks in relation to full block (always positive)
-        self.base_velocity = 10  #
+        self.base_velocity = 7  #
         self.velocity = self.base_velocity #max 24, min 1, INTENDED TO BE MODIFIED IN RUNTIME
         self.blocks_on_screen = 20 # Number of blocks on the screen
         self.block_width = self.screen_width / self.blocks_on_screen # Width of one block in pixels (read only)
@@ -91,12 +91,14 @@ class Map:
         self.current_spawned_structure_index = 0
         self.current_spawned_structure = self.map_structures[self.current_spawned_structure_index]
 
-    #Displays all blocks (needs to be done after clearing screen every frame)
+        self.block_image = pygame.image.load("ic9.png").convert_alpha()
+        self.block_image = pygame.transform.scale(self.block_image, (int(self.block_width), int(self.block_height)))
+
     def display_saved_blocks(self):
         for block in self.block_list:
             x_pos = block[0] * self.block_width
             y_pos = block[1] * self.block_height + self.y_offset
-            pygame.draw.rect(self.surface, (0, 255, 0), [x_pos, y_pos, self.block_width, self.block_height])
+            self.surface.blit(self.block_image, (x_pos, y_pos))
 
     # Moves blocks down the screen according to velocity
     def move_blocks(self):
