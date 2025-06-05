@@ -91,11 +91,9 @@ class Map:
         self.current_spawned_structure_index = 0
         self.current_spawned_structure = self.map_structures[self.current_spawned_structure_index]
 
-        # <-- ZMIANA: wczytanie i przeskalowanie obrazka bloku
         self.block_image = pygame.image.load("ic9.png").convert_alpha()
         self.block_image = pygame.transform.scale(self.block_image, (int(self.block_width), int(self.block_height)))
 
-    # <-- ZMIANA: wyświetlanie obrazków zamiast zielonych prostokątów
     def display_saved_blocks(self):
         for block in self.block_list:
             x_pos = block[0] * self.block_width
