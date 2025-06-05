@@ -98,7 +98,7 @@ class Map:
         for block in self.block_list:
             x_pos = block[0] * self.block_width
             y_pos = block[1] * self.block_height + self.y_offset
-            self.surface.blit(self.block_image, (x_pos, y_pos))  # <-- ZMIANA
+            self.surface.blit(self.block_image, (x_pos, y_pos))
 
     # Moves blocks down the screen according to velocity
     def move_blocks(self):
